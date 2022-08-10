@@ -9,10 +9,13 @@ type Person interface {
 }
 
 type PersonImpl struct {
-	Id      int
-	Name    string
-	Age     int
-	Address string
+	Id       int
+	Name     string
+	Username string
+	Password string
+	Age      int
+	Address  string
+	Roles    []string
 }
 
 func (person *PersonImpl) ShowInfo() {
@@ -38,5 +41,17 @@ func NewPerson(id int, name string, age int, address string) *PersonImpl {
 		Name:    name,
 		Age:     age,
 		Address: address,
+	}
+}
+
+func NewUser(id int, name string, age int, address string, username string, password string, roles ...string) *PersonImpl {
+	return &PersonImpl{
+		Id:       id,
+		Name:     name,
+		Age:      age,
+		Address:  address,
+		Username: username,
+		Password: password,
+		Roles:    roles,
 	}
 }

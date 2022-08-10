@@ -43,3 +43,13 @@ func Remove[T any](slice []T, filter func(*T) bool) []T {
 
 	return slice
 }
+
+func Contains[T any](slice []T, compare func(*T) bool) bool {
+	for _, n := range slice {
+		if compare(&n) {
+			return true
+		}
+	}
+
+	return false
+}

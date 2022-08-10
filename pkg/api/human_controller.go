@@ -2,6 +2,7 @@ package api
 
 import (
 	"fmt"
+	"github.com/kimxuanhong/go-campaign-no-02/pkg/auth"
 	"net/http"
 	"strconv"
 
@@ -28,14 +29,14 @@ func NewHumanController() *HumanControllerImpl {
 	}
 }
 
-func HumanControllerRouter(e *echo.Echo) {
+func HumanControllerRouter(e *echo.Group) {
 	controller := NewHumanController()
 
-	e.GET("/GetPersons", controller.GetPersons)
-	e.GET("/GetPerson/:id", controller.GetPerson)
-	e.POST("/CreatePerson", controller.CreatePerson)
-	e.PUT("/UpdatePerson/:id", controller.UpdatePerson)
-	e.DELETE("/DeletePerson/:id", controller.DeletePerson)
+	e.GET("/GetPersons", controller.GetPersons, auth.HasRole("customer"))
+	e.GET("/GetPerson/:id", controller.GetPerson, auth.HasRole("customer"))
+	e.POST("/CreatePerson", controller.CreatePerson, auth.HasRole("admin"))
+	e.PUT("/UpdatePerson/:id", controller.UpdatePerson, auth.HasRole("admin"))
+	e.DELETE("/DeletePerson/:id", controller.DeletePerson, auth.HasRole("customer", "admin"))
 }
 
 func (ctr *HumanControllerImpl) GetPersons(c echo.Context) error {
