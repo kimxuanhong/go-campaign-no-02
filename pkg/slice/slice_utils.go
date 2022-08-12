@@ -1,6 +1,6 @@
 package slice
 
-func FirstOrDefault[T any](slice []T, filter func(*T) bool) (element *T) {
+func FirstOrDefault[T any](slice []T, filter func(*T) bool) *T {
 
 	for i := 0; i < len(slice); i++ {
 		if filter(&slice[i]) {
@@ -44,9 +44,9 @@ func Remove[T any](slice []T, filter func(*T) bool) []T {
 	return slice
 }
 
-func Contains[T any](slice []T, compare func(*T) bool) bool {
+func Contains[T any](slice []T, predicate func(*T) bool) bool {
 	for _, n := range slice {
-		if compare(&n) {
+		if predicate(&n) {
 			return true
 		}
 	}
