@@ -19,11 +19,16 @@ type AuthControllerImpl struct {
 	userService service.UserService
 }
 
+var instanceAuthController *AuthControllerImpl
+
 func NewAuthController() *AuthControllerImpl {
-	return &AuthControllerImpl{
-		jwtConfig:   &auth.JwtConfigImpl{},
-		userService: service.NewUserService(),
+	if instanceAuthController == nil {
+		instanceAuthController = &AuthControllerImpl{
+			jwtConfig:   auth.NewJwtConfig(),
+			userService: service.NewUserService(),
+		}
 	}
+	return instanceAuthController
 }
 
 func AuthControllerRouter(e *echo.Group) {
@@ -40,6 +45,7 @@ func (r *AuthControllerImpl) Login(c echo.Context) error {
 
 	user := r.userService.FindUserByEmail(loginReq.Username)
 	if user == nil {
+		//return error2.ThrowNotFoundException("Resource User not found with id = %v", 1)
 		return echo.NewHTTPError(http.StatusUnauthorized, "Username is incorrect")
 	}
 

@@ -17,12 +17,17 @@ type RouterImpl struct {
 	address   string
 }
 
+var instanceRouter *RouterImpl
+
 func NewRouter(address string) *RouterImpl {
-	return &RouterImpl{
-		jwtConfig: &auth.JwtConfigImpl{},
-		router:    echo.New(),
-		address:   address,
+	if instanceRouter == nil {
+		instanceRouter = &RouterImpl{
+			jwtConfig: auth.NewJwtConfig(),
+			router:    echo.New(),
+			address:   address,
+		}
 	}
+	return instanceRouter
 }
 
 func (r *RouterImpl) Start() {

@@ -34,6 +34,15 @@ type JwtConfig interface {
 type JwtConfigImpl struct {
 }
 
+var instanceJwtConfig *JwtConfigImpl
+
+func NewJwtConfig() *JwtConfigImpl {
+	if instanceJwtConfig == nil {
+		instanceJwtConfig = &JwtConfigImpl{}
+	}
+	return instanceJwtConfig
+}
+
 func (r *JwtConfigImpl) GetJWTSecret() string {
 	return os.Getenv("JWT_SECRET_KEY")
 }

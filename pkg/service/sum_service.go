@@ -9,6 +9,15 @@ type SumService interface {
 type SumServiceImpl struct {
 }
 
+var instanceSumService *SumServiceImpl
+
+func NewSumService() *SumServiceImpl {
+	if instanceSumService == nil {
+		instanceSumService = &SumServiceImpl{}
+	}
+	return instanceSumService
+}
+
 func (r *SumServiceImpl) Valid(age int) bool {
 	return age > 18
 }

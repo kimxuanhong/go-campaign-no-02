@@ -14,14 +14,19 @@ type UserServiceImpl struct {
 	arr []models.PersonImpl
 }
 
-func NewUserService() *UserServiceImpl {
-	var arr []models.PersonImpl
-	hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("12345"), 10)
-	arr = append(arr, *models.NewUser(1, "Hung Pham", 22, "dark nong", "hungpham", string(hashedPassword), "admin", "customer"))
+var instanceUserService *UserServiceImpl
 
-	return &UserServiceImpl{
-		arr: arr,
+func NewUserService() *UserServiceImpl {
+	if instanceUserService == nil {
+		var arr []models.PersonImpl
+		hashedPassword, _ := bcrypt.GenerateFromPassword([]byte("12345"), 10)
+		arr = append(arr, *models.NewUser(1, "Hung Pham", 22, "dark nong", "hungpham", string(hashedPassword), "admin", "customer"))
+
+		instanceUserService = &UserServiceImpl{
+			arr: arr,
+		}
 	}
+	return instanceUserService
 }
 
 func (r *UserServiceImpl) FindUserByEmail(username string) *models.PersonImpl {

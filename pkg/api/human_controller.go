@@ -23,10 +23,15 @@ type HumanControllerImpl struct {
 	personService service.PersonService
 }
 
+var instanceHumanController *HumanControllerImpl
+
 func NewHumanController() *HumanControllerImpl {
-	return &HumanControllerImpl{
-		personService: service.NewPersonService(),
+	if instanceHumanController == nil {
+		instanceHumanController = &HumanControllerImpl{
+			personService: service.NewPersonService(),
+		}
 	}
+	return instanceHumanController
 }
 
 func HumanControllerRouter(e *echo.Group) {

@@ -20,15 +20,20 @@ type PersonServiceImpl struct {
 	seq        int
 }
 
-func NewPersonService() *PersonServiceImpl {
-	var arr []models.PersonImpl
-	arr = append(arr, *models.NewPerson(1, "hung", 22, "dark nong"))
+var instancePersonService *PersonServiceImpl
 
-	return &PersonServiceImpl{
-		sumService: &SumServiceImpl{},
-		arr:        arr,
-		seq:        3,
+func NewPersonService() *PersonServiceImpl {
+	if instancePersonService == nil {
+		var arr []models.PersonImpl
+		arr = append(arr, *models.NewPerson(1, "hung", 22, "dark nong"))
+
+		instancePersonService = &PersonServiceImpl{
+			sumService: NewSumService(),
+			arr:        arr,
+			seq:        3,
+		}
 	}
+	return instancePersonService
 }
 
 func (r *PersonServiceImpl) GenPerson(age int) models.PersonImpl {

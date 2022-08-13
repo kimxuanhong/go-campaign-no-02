@@ -1,4 +1,4 @@
-package db
+package dao
 
 import (
 	"database/sql"
@@ -11,14 +11,14 @@ type DataSource struct {
 	db *sql.DB
 }
 
-var instance *DataSource
+var instanceDataSource *DataSource
 
-func GetDataSource() *DataSource {
-	if instance == nil {
-		instance = &DataSource{}
-		instance.Init()
+func NewDataSource() *DataSource {
+	if instanceDataSource == nil {
+		instanceDataSource = &DataSource{}
+		instanceDataSource.Init()
 	}
-	return instance
+	return instanceDataSource
 }
 
 func (r *DataSource) GetConn() *sql.DB {
