@@ -62,8 +62,11 @@ func (r *PersonServiceImpl) GetPerson(id int) models.PersonImpl {
 }
 
 func (r *PersonServiceImpl) GetPersons() []models.PersonImpl {
+	arr := slice.Where(r.arr, func(t *models.PersonImpl) bool {
+		return t.Id == 1
+	})
 
-	return r.arr
+	return arr
 }
 
 func (r *PersonServiceImpl) CreatePerson(personReq dto.PersonRequest) models.PersonImpl {

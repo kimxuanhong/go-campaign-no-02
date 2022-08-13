@@ -1,26 +1,21 @@
 package slice
 
 func FirstOrDefault[T any](slice []T, filter func(*T) bool) *T {
-
 	for i := 0; i < len(slice); i++ {
 		if filter(&slice[i]) {
 			return &slice[i]
 		}
 	}
-
 	return nil
 }
 
-func Where[T any](slice []T, filter func(*T) bool) []*T {
-
-	var arr = make([]*T, 0)
-
+func Where[T any](slice []T, filter func(*T) bool) []T {
+	var arr = make([]T, 0)
 	for i := 0; i < len(slice); i++ {
 		if filter(&slice[i]) {
-			arr = append(arr, &slice[i])
+			arr = append(arr, slice[i])
 		}
 	}
-
 	return arr
 }
 
