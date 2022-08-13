@@ -6,6 +6,8 @@ import (
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/slice"
 )
 
+//go:generate mockgen -source=person_service.go -destination=mocks/person_service_mock.go -package=mocks
+
 type PersonService interface {
 	GenPerson(age int) models.PersonImpl
 	GetPerson(id int) models.PersonImpl

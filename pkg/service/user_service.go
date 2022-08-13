@@ -6,6 +6,8 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+//go:generate mockgen -source=user_service.go -destination=mocks/user_service_mock.go -package=mocks
+
 type UserService interface {
 	FindUserByEmail(email string) *models.PersonImpl
 }

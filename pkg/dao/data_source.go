@@ -7,25 +7,37 @@ import (
 	"time"
 )
 
-type DataSource struct {
+//go:generate mockgen -source=data_source.go -destination=mocks/data_source_mock.go -package=mocks
+
+type DataSource interface {
+	init() *sql.DB
+	GetConn() *sql.DB
+	CloseStmt(stmt *sql.Stmt)
+	CloseRows(rows *sql.Rows)
+}
+
+type DataSourceImpl struct {
 	db *sql.DB
 }
 
-var instanceDataSource *DataSource
+var instanceDataSource *DataSourceImpl
 
-func NewDataSource() *DataSource {
+func NewDataSource() *DataSourceImpl {
 	if instanceDataSource == nil {
-		instanceDataSource = &DataSource{}
-		instanceDataSource.Init()
+		instanceDataSource = &DataSourceImpl{}
+		instanceDataSource.init()
 	}
 	return instanceDataSource
 }
 
-func (r *DataSource) GetConn() *sql.DB {
+func (r *DataSourceImpl) GetConn() *sql.DB {
+	if r.db == nil {
+		r.db = r.init()
+	}
 	return r.db
 }
 
-func (r *DataSource) Init() {
+func (r *DataSourceImpl) init() *sql.DB {
 	dbDriver := "mysql"
 	dbUser := "root"
 	dbPass := "passw0rd"
@@ -44,11 +56,11 @@ func (r *DataSource) Init() {
 	db.SetMaxIdleConns(5)
 	db.SetConnMaxLifetime(time.Second * 10)
 
-	r.db = db
+	return db
 }
 
 //CloseStmt after run stmt
-func (r *DataSource) CloseStmt(stmt *sql.Stmt) {
+func (r *DataSourceImpl) CloseStmt(stmt *sql.Stmt) {
 	if stmt != nil {
 		err := stmt.Close()
 		if err != nil {
@@ -58,7 +70,7 @@ func (r *DataSource) CloseStmt(stmt *sql.Stmt) {
 }
 
 //CloseRows when select
-func (r *DataSource) CloseRows(rows *sql.Rows) {
+func (r *DataSourceImpl) CloseRows(rows *sql.Rows) {
 	if rows != nil {
 		err := rows.Close()
 		if err != nil {
