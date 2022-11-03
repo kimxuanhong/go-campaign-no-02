@@ -4,13 +4,13 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/go-sql-driver/mysql"
+	"os"
 	"time"
 )
 
 //go:generate mockgen -source=data_source.go -destination=mocks/data_source_mock.go -package=mocks
 
 type DataSource interface {
-	init() *sql.DB
 	GetConn() *sql.DB
 	CloseStmt(stmt *sql.Stmt)
 	CloseRows(rows *sql.Rows)
@@ -22,26 +22,28 @@ type DataSourceImpl struct {
 
 var instanceDataSource *DataSourceImpl
 
-func NewDataSource() *DataSourceImpl {
+func DataSourceInstance() *DataSourceImpl {
 	if instanceDataSource == nil {
-		instanceDataSource = &DataSourceImpl{}
-		instanceDataSource.init()
+		instanceDataSource = &DataSourceImpl{
+			db: connectDB(),
+		}
 	}
 	return instanceDataSource
 }
 
 func (r *DataSourceImpl) GetConn() *sql.DB {
 	if r.db == nil {
-		r.db = r.init()
+		r.db = connectDB()
 	}
 	return r.db
 }
 
-func (r *DataSourceImpl) init() *sql.DB {
-	dbDriver := "mysql"
-	dbUser := "root"
-	dbPass := "passw0rd"
-	dbName := "golang_demo"
+func connectDB() *sql.DB {
+	dbDriver := os.Getenv("DB_DRIVER")
+	dbUser := os.Getenv("DB_USER")
+	dbPass := os.Getenv("DB_PASS")
+	dbName := os.Getenv("DB_NAME")
+
 	db, err := sql.Open(dbDriver, dbUser+":"+dbPass+"@/"+dbName)
 	if err != nil {
 		fmt.Println("Connection Failed!!")

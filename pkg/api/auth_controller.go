@@ -37,12 +37,14 @@ func AuthControllerRouter(e *echo.Group) {
 	e.POST("/RefreshToken", controller.RefreshToken)
 }
 
-func (r *AuthControllerImpl) Login(c echo.Context) error {
+func (r *AuthControllerImpl) Login(c echo.Context) (err error) {
 	loginReq := dto.UserLogin{}
 	if err := c.Bind(&loginReq); err != nil {
+		return echo.NewHTTPError(http.StatusBadRequest, err.Error())
+	}
+	if err = c.Validate(loginReq); err != nil {
 		return err
 	}
-
 	user := r.userService.FindUserByEmail(loginReq.Username)
 	if user == nil {
 		//return error2.ThrowNotFoundException("Resource User not found with id = %v", 1)

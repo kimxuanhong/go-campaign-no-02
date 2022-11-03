@@ -12,6 +12,6 @@ func main() {
 		log.Fatal("Error loading .env file")
 	}
 
-	Router := handler.NewRouter(":8080")
-	Router.Start()
+	router := handler.NewRouter(":8080")
+	router.Start()
 }

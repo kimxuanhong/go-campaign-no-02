@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"github.com/go-playground/validator"
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/api"
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/auth"
 	"github.com/labstack/echo/v4"
@@ -31,6 +32,11 @@ func NewRouter(address string) *RouterImpl {
 }
 
 func (r *RouterImpl) Start() {
+
+	// Validator
+	r.router.Validator = &ValidatorImpl{
+		Validator: validator.New(),
+	}
 
 	// Middleware
 	r.router.Use(middleware.Logger())
