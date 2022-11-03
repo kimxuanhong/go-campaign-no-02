@@ -1,9 +1,12 @@
 package service
 
 import (
+	"context"
+	"github.com/kimxuanhong/go-campaign-no-02/pkg/dao"
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/dto"
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/models"
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/slice"
+	"time"
 )
 
 //go:generate mockgen -source=person_service.go -destination=mocks/person_service_mock.go -package=mocks
@@ -17,6 +20,7 @@ type PersonService interface {
 }
 
 type PersonServiceImpl struct {
+	db         dao.MongoDB
 	sumService SumService
 	arr        []models.PersonImpl
 	seq        int
@@ -30,6 +34,7 @@ func NewPersonService() *PersonServiceImpl {
 		arr = append(arr, *models.NewPerson(1, "hung", 22, "dark nong"))
 
 		instancePersonService = &PersonServiceImpl{
+			db:         dao.MongoDBInstance(),
 			sumService: NewSumService(),
 			arr:        arr,
 			seq:        3,
@@ -72,8 +77,10 @@ func (r *PersonServiceImpl) GetPersons() []models.PersonImpl {
 func (r *PersonServiceImpl) CreatePerson(personReq dto.PersonRequest) models.PersonImpl {
 	person := models.NewPerson(r.seq, personReq.Name, personReq.Age, personReq.Address)
 	r.seq++
-	r.arr = append(r.arr, *person)
+	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
 
+	_, _ = r.db.GetCollection("user").InsertOne(ctx, person)
 	return *person
 }
 

@@ -1,16 +1,13 @@
 package api
 
 import (
-	"context"
 	"fmt"
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/auth"
-	"github.com/kimxuanhong/go-campaign-no-02/pkg/dao"
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/dto"
 	"github.com/kimxuanhong/go-campaign-no-02/pkg/service"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type HumanController interface {
@@ -23,7 +20,6 @@ type HumanController interface {
 
 type HumanControllerImpl struct {
 	personService service.PersonService
-	db            dao.MongoDB
 }
 
 var instanceHumanController *HumanControllerImpl
@@ -32,7 +28,6 @@ func NewHumanController() *HumanControllerImpl {
 	if instanceHumanController == nil {
 		instanceHumanController = &HumanControllerImpl{
 			personService: service.NewPersonService(),
-			db:            dao.MongoDBInstance(),
 		}
 	}
 	return instanceHumanController
@@ -69,13 +64,7 @@ func (ctr *HumanControllerImpl) CreatePerson(c echo.Context) error {
 	if err := c.Bind(&personReq); err != nil {
 		return err
 	}
-
-	//person := ctr.personService.CreatePerson(personReq)
-	//fmt.Printf("FullName = %v\n", person)
-
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
-	person, _ := ctr.db.GetCollection("user").InsertOne(ctx, personReq)
+	person := ctr.personService.CreatePerson(personReq)
 
 	return c.JSON(http.StatusOK, person)
 }
